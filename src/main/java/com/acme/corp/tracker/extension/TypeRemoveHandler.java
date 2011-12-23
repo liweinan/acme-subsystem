@@ -11,6 +11,8 @@ import org.jboss.msc.service.ServiceName;
 
 import java.util.Locale;
 
+import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.*;
+
 public class TypeRemoveHandler extends AbstractRemoveStepHandler implements DescriptionProvider {
 
     public static final TypeRemoveHandler INSTANCE = new TypeRemoveHandler();

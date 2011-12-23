@@ -1,6 +1,9 @@
 package com.acme.corp.tracker.extension;
 
-import org.jboss.as.controller.*;
+import org.jboss.as.controller.AbstractAddStepHandler;
+import org.jboss.as.controller.OperationContext;
+import org.jboss.as.controller.OperationFailedException;
+import org.jboss.as.controller.PathAddress;
 import org.jboss.as.controller.descriptions.DescriptionProvider;
 import org.jboss.as.controller.descriptions.ModelDescriptionConstants;
 import org.jboss.dmr.ModelNode;
@@ -10,6 +13,8 @@ import org.jboss.msc.service.ServiceName;
 
 import java.util.List;
 import java.util.Locale;
+
+import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.*;
 
 class TypeAddHandler extends AbstractAddStepHandler implements DescriptionProvider {
     public static final TypeAddHandler INSTANCE = new TypeAddHandler();
