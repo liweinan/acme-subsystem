@@ -1,11 +1,14 @@
 package com.acme.corp.tracker.extension;
 
-import org.jboss.as.controller.AbstractAddStepHandler;
-import org.jboss.as.controller.OperationFailedException;
+import org.jboss.as.controller.*;
 import org.jboss.as.controller.descriptions.DescriptionProvider;
+import org.jboss.as.controller.descriptions.ModelDescriptionConstants;
 import org.jboss.dmr.ModelNode;
 import org.jboss.dmr.ModelType;
+import org.jboss.msc.service.ServiceController;
+import org.jboss.msc.service.ServiceName;
 
+import java.util.List;
 import java.util.Locale;
 
 class TypeAddHandler extends AbstractAddStepHandler implements DescriptionProvider {
@@ -35,5 +38,15 @@ class TypeAddHandler extends AbstractAddStepHandler implements DescriptionProvid
             tick = operation.get("tick").asLong();
         }
         model.get("tick").set(tick);
+    }
+
+    @Override
+    protected void performRuntime(OperationContext context, ModelNode operation, ModelNode model,
+                                  ServiceVerificationHandler verificationHandler, List<ServiceController<?>> newControllers) throws OperationFailedException {
+        String suffix = PathAddress.pathAddress(operation.get(ModelDescriptionConstants.ADDRESS)).getLastElement().getValue();
+        TrackerService service = new TrackerService(suffix, model.get("tick").asLong());
+        ServiceName name = TrackerService.createServiceName(suffix);
+        ServiceController<TrackerService> controller = context.getServiceTarget().addService(name, service).addListener(verificationHandler).setInitialMode(Mode.ACTIVE).install();
+        newControllers.add(controller);
     }
 }

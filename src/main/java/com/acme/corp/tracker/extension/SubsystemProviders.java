@@ -1,14 +1,12 @@
 package com.acme.corp.tracker.extension;
 
-import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.DESCRIPTION;
-import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.HEAD_COMMENT_ALLOWED;
-import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.NAMESPACE;
-import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.TAIL_COMMENT_ALLOWED;
+import org.jboss.as.controller.descriptions.DescriptionProvider;
+import org.jboss.dmr.ModelNode;
+import org.jboss.dmr.ModelType;
 
 import java.util.Locale;
 
-import org.jboss.as.controller.descriptions.DescriptionProvider;
-import org.jboss.dmr.ModelNode;
+import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.*;
 
 /**
  * Contains the description providers. The description providers are what print out the
@@ -50,6 +48,23 @@ class SubsystemProviders {
             subsystem.get(DESCRIPTION).set("Adds the tracker subsystem");
 
             return subsystem;
+        }
+    };
+
+
+    /**
+     * Used to create the description of the {@code type} child
+     */
+    public static DescriptionProvider TYPE_CHILD = new DescriptionProvider() {
+        @Override
+        public ModelNode getModelDescription(Locale locale) {
+            ModelNode node = new ModelNode();
+            node.get(DESCRIPTION).set("Contains information about a tracked deployment type");
+            node.get(ATTRIBUTES, "tick", DESCRIPTION).set("How often in milliseconds to output the information about the tracked deployments");
+            node.get(ATTRIBUTES, "tick", TYPE).set(ModelType.LONG);
+            node.get(ATTRIBUTES, "tick", REQUIRED).set(true);
+            node.get(ATTRIBUTES, "tick", DEFAULT).set(10000);
+            return node;
         }
     };
 
