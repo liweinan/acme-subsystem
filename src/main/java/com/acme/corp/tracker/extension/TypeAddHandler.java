@@ -1,9 +1,6 @@
 package com.acme.corp.tracker.extension;
 
-import org.jboss.as.controller.AbstractAddStepHandler;
-import org.jboss.as.controller.OperationContext;
-import org.jboss.as.controller.OperationFailedException;
-import org.jboss.as.controller.PathAddress;
+import org.jboss.as.controller.*;
 import org.jboss.as.controller.descriptions.DescriptionProvider;
 import org.jboss.as.controller.descriptions.ModelDescriptionConstants;
 import org.jboss.dmr.ModelNode;
@@ -51,7 +48,7 @@ class TypeAddHandler extends AbstractAddStepHandler implements DescriptionProvid
         String suffix = PathAddress.pathAddress(operation.get(ModelDescriptionConstants.ADDRESS)).getLastElement().getValue();
         TrackerService service = new TrackerService(suffix, model.get("tick").asLong());
         ServiceName name = TrackerService.createServiceName(suffix);
-        ServiceController<TrackerService> controller = context.getServiceTarget().addService(name, service).addListener(verificationHandler).setInitialMode(Mode.ACTIVE).install();
+        ServiceController<TrackerService> controller = context.getServiceTarget().addService(name, service).addListener(verificationHandler).setInitialMode(ServiceController.Mode.ACTIVE).install();
         newControllers.add(controller);
     }
 }

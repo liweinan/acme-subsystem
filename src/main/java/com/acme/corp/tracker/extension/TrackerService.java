@@ -7,13 +7,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
-/**
- * Created by IntelliJ IDEA.
- * User: liweinan
- * Date: 12/23/11
- * Time: 12:13 PM
- * To change this template use File | Settings | File Templates.
- */
 public class TrackerService implements Service<TrackerService> {
 
     private AtomicLong tick = new AtomicLong(10000);

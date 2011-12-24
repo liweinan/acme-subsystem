@@ -1,12 +1,13 @@
 package com.acme.corp.tracker.deployment;
 
+import com.acme.corp.tracker.extension.TrackerService;
 import org.jboss.as.server.AbstractDeploymentChainStep;
-import org.jboss.as.server.deployment.DeploymentPhaseContext;
-import org.jboss.as.server.deployment.DeploymentUnit;
-import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
-import org.jboss.as.server.deployment.DeploymentUnitProcessor;
-import org.jboss.as.server.deployment.Phase;
+import org.jboss.as.server.deployment.*;
+import org.jboss.as.server.deployment.module.ResourceRoot;
 import org.jboss.logging.Logger;
+import org.jboss.msc.service.ServiceController;
+import org.jboss.msc.service.ServiceRegistry;
+import org.jboss.vfs.VirtualFile;
 
 /**
  * An example deployment unit processor that does nothing. To add more deployment
@@ -33,11 +34,37 @@ public class SubsystemDeploymentProcessor implements DeploymentUnitProcessor {
 
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
-        log.info("Deploy");
+        String name = phaseContext.getDeploymentUnit().getName();
+        TrackerService service = getTrackerService(phaseContext.getServiceRegistry(), name);
+        if (service != null) {
+            ResourceRoot root = phaseContext.getDeploymentUnit().getAttachment(Attachments.DEPLOYMENT_ROOT);
+            VirtualFile cool = root.getRoot().getChild("META-INF/cool.txt");
+            service.addDeployment(name);
+            if (cool.exists()) {
+                service.addCoolDeployment(name);
+            }
+        }
     }
 
     @Override
     public void undeploy(DeploymentUnit context) {
+        context.getServiceRegistry();
+        String name = context.getName();
+        TrackerService service = getTrackerService(context.getServiceRegistry(), name);
+        if (service != null) {
+            service.removeDeployment(name);
+        }
+    }
+
+    private TrackerService getTrackerService(ServiceRegistry registry, String name) {
+        int last = name.lastIndexOf(".");
+        String suffix = name.substring(last + 1);
+        ServiceController<?> container = registry.getService(TrackerService.createServiceName(suffix));
+        if (container != null) {
+            TrackerService service = (TrackerService) container.getValue();
+            return service;
+        }
+        return null;
     }
 
 }
